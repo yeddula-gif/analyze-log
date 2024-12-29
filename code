@@ -1,0 +1,35 @@
+from collections import Counter
+
+def analyze_logs(log_file):
+    try:
+        with open(log_file, 'r') as file:
+            logs = file.readlines()
+        
+        # Extract relevant data
+        status_codes = []
+        requested_pages = []
+        ip_addresses = []
+        
+        for log in logs:
+            parts = log.split()
+            if len(parts) > 8:  # Ensure the log line has enough parts
+                ip_addresses.append(parts[0])
+                requested_pages.append(parts[6])
+                status_codes.append(parts[8])
+        
+        # Analyze patterns
+        most_common_ip = Counter(ip_addresses).most_common(1)
+        most_requested_page = Counter(requested_pages).most_common(1)
+        error_404_count = status_codes.count('404')
+        
+        # Output report
+        print(f"Most common IP address: {most_common_ip}")
+        print(f"Most requested page: {most_requested_page}")
+        print(f"Number of 404 errors: {error_404_count}")
+    
+    except FileNotFoundError:
+        print(f"Error: Log file '{log_file}' not found.")
+
+if __name__ == "__main__":  # Corrected condition
+    log_file_path = "webserver.log"  # Replace with your log file path
+    analyze_logs(log_file_path)
